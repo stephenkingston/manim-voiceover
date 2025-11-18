@@ -43,6 +43,7 @@ class GeminiTTSService(SpeechService):
         self,
         model: str = "gemini-2.5-flash-preview-tts",
         voice_name: str = "Kore",
+        transcription_model: str = "base",
         **kwargs
     ):
         self.model = model
@@ -54,7 +55,7 @@ class GeminiTTSService(SpeechService):
 
         self.client = genai.Client(api_key=api_key)
 
-        super().__init__(transcription_model=None, **kwargs)
+        super().__init__(transcription_model=transcription_model, **kwargs)
 
 
     def generate_from_text(

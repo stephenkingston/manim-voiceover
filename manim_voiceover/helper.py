@@ -8,7 +8,7 @@ import pip
 import textwrap
 from pydub import AudioSegment
 from pathlib import Path
-from manim import logger
+from manimlib import log
 
 
 def chunks(lst: list, n: int):
@@ -33,7 +33,7 @@ def wav2mp3(wav_path, mp3_path=None, remove_wav=True, bitrate="312k"):
     if remove_wav:
         # Remove the .wav file
         os.remove(wav_path)
-    logger.info(f"Saved {mp3_path}")
+    log.info(f"Saved {mp3_path}")
     return
 
 
@@ -125,7 +125,7 @@ def prompt_ask_missing_package(target_module: str, package_name: str):
         return
     except ImportError:
         pass
-    logger.info(
+    log.info(
         f"The package {package_name} is not installed. "
         f"Shall I install it for you? [Y/n]"
     )
@@ -135,9 +135,9 @@ def prompt_ask_missing_package(target_module: str, package_name: str):
             f"{package_name} is not installed. Install it by running `pip install {package_name}`"
         )
     else:
-        logger.info(f"Installing {package_name}...")
+        log.info(f"Installing {package_name}...")
         pip.main(["install", package_name])
-        logger.info("Installed missing packages. Please run Manim again.")
+        log.info("Installed missing packages. Please run Manim again.")
         sys.exit(0)
 
 
@@ -162,7 +162,7 @@ def prompt_ask_missing_extras(
         pass
 
     # If we reach here, it means that at least one of the modules is not installed
-    logger.info(
+    log.info(
         f"The extra packages required by {dependent_item} are not installed. "
         f"Shall I install them for you? [Y/n]"
     )
@@ -172,27 +172,25 @@ def prompt_ask_missing_extras(
             f'{extras} extras are not installed. Install them by running `pip install "manim-voiceover[{extras}]"`'
         )
     else:
-        logger.info(f"Installing {extras}...")
+        log.info(f"Installing {extras}...")
         pip.main(["install", f"manim-voiceover[{extras}]"])
-        logger.info("Installed missing extras. Please run Manim again.")
+        log.info("Installed missing extras. Please run Manim again.")
         sys.exit(0)
 
 
 def create_dotenv_file(required_variable_names: list, dotenv=".env"):
     """Create a .env file with the required variables"""
     if os.path.exists(dotenv):
-        logger.info(
-            f"File {dotenv} already exists. Would you like to overwrite it? [Y/n]"
-        )
+        log.info(f"File {dotenv} already exists. Would you like to overwrite it? [Y/n]")
         answer = input()
         if answer.lower() == "n":
-            logger.info("Skipping .env file creation...")
+            log.info("Skipping .env file creation...")
             return False
 
-    logger.info("Creating .env file...")
+    log.info("Creating .env file...")
     with open(dotenv, "w") as f:
         for var_name in required_variable_names:
-            logger.info(f"Enter value for {var_name}:")
+            log.info(f"Enter value for {var_name}:")
             value = input()
             f.write(f"{var_name}={value}\n")
 

@@ -1,13 +1,13 @@
 from pathlib import Path
 
-from manim import logger
+from manimlib import log
 from manim_voiceover.helper import prompt_ask_missing_package, remove_bookmarks, wav2mp3
 from manim_voiceover.services.base import SpeechService
 
 try:
     from TTS.api import TTS
 except ImportError:
-    logger.error("Missing packages. Run `pip install TTS` to use CoquiService.")
+    log.error("Missing packages. Run `pip install TTS` to use CoquiService.")
 
 # DEFAULT_MODEL = TTS.list_models()[0]
 DEFAULT_MODEL = "tts_models/en/ljspeech/tacotron2-DDC"

@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import List, Optional, Union
 
 from dotenv import find_dotenv, load_dotenv
-from manim import logger
+from manimlib import log
 
 from manim_voiceover.helper import create_dotenv_file, remove_bookmarks
 from manim_voiceover.services.base import SpeechService
@@ -12,7 +12,7 @@ from manim_voiceover.services.base import SpeechService
 try:
     from elevenlabs import OutputFormat, Voice, VoiceSettings, generate, save, voices
 except ImportError:
-    logger.error(
+    log.error(
         'Missing packages. Run `pip install "manim-voiceover[elevenlabs]"` '
         "to use ElevenLabs API."
     )
@@ -22,7 +22,7 @@ load_dotenv(find_dotenv(usecwd=True))
 
 
 def create_dotenv_elevenlabs():
-    logger.info(
+    log.info(
         "Check out https://voiceover.manim.community/en/stable/services.html#elevenlabs"
         " to learn how to create an account and get your subscription key."
     )
@@ -34,7 +34,7 @@ def create_dotenv_elevenlabs():
                 "The environment variables ELEVEN_API_KEY are not set. "
                 "Please set them or create a .env file with the variables."
             )
-        logger.info("The .env file has been created. Please run Manim again.")
+        log.info("The .env file has been created. Please run Manim again.")
         sys.exit()
 
 
@@ -86,7 +86,7 @@ class ElevenLabsService(SpeechService):
                 for reference. Defaults to `mp3_44100_128`.
         """
         if not voice_name and not voice_id:
-            logger.warn(
+            log.warn(
                 "None of `voice_name` or `voice_id` provided. "
                 "Will be using default voice."
             )
@@ -103,7 +103,7 @@ class ElevenLabsService(SpeechService):
         if selected_voice:
             self.voice = selected_voice[0]
         else:
-            logger.warn(
+            log.warn(
                 "Given `voice_name` or `voice_id` not found (or not provided). "
                 f"Defaulting to {available_voices[0].name}"
             )
@@ -182,7 +182,7 @@ class ElevenLabsService(SpeechService):
             )
             save(audio, str(Path(cache_dir) / audio_path))  # type: ignore
         except Exception as e:
-            logger.error(e)
+            log.error(e)
             raise Exception("Failed to initialize ElevenLabs.")
 
         json_dict = {

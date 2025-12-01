@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 from dotenv import find_dotenv, load_dotenv
-from manim import logger
+from manimlib import log
 
 from manim_voiceover.helper import (
     create_dotenv_file,
@@ -15,7 +15,7 @@ from manim_voiceover.services.base import SpeechService
 try:
     import azure.cognitiveservices.speech as speechsdk
 except ImportError:
-    logger.error(
+    log.error(
         'Missing packages. Run `pip install "manim-voiceover[azure]"` to use AzureService.'
     )
 
@@ -35,14 +35,14 @@ def serialize_word_boundary(wb):
 
 
 def create_dotenv_azure():
-    logger.info(
+    log.info(
         "Check out https://voiceover.manim.community/en/stable/services.html#azureservice to learn how to create an account and get your subscription key."
     )
     if not create_dotenv_file(["AZURE_SUBSCRIPTION_KEY", "AZURE_SERVICE_REGION"]):
         raise Exception(
             "The environment variables AZURE_SUBSCRIPTION_KEY and AZURE_SERVICE_REGION are not set. Please set them or create a .env file with the variables."
         )
-    logger.info("The .env file has been created. Please run Manim again.")
+    log.info("The .env file has been created. Please run Manim again.")
     sys.exit()
 
 
@@ -150,7 +150,7 @@ class AzureService(SpeechService):
             azure_subscription_key = os.environ["AZURE_SUBSCRIPTION_KEY"]
             azure_service_region = os.environ["AZURE_SERVICE_REGION"]
         except KeyError:
-            logger.error(
+            log.error(
                 "Could not find the environment variables AZURE_SUBSCRIPTION_KEY and AZURE_SERVICE_REGION. Microsoft Azure's text-to-speech API needs account credentials to connect. You can create an account for free and (as of writing this) get a free quota of TTS minutes."
             )
             create_dotenv_azure()
@@ -200,19 +200,19 @@ class AzureService(SpeechService):
             pass
         elif speech_synthesis_result.reason == speechsdk.ResultReason.Canceled:
             cancellation_details = speech_synthesis_result.cancellation_details
-            logger.error(
+            log.error(
                 "Speech synthesis canceled: {}".format(cancellation_details.reason)
             )
             if cancellation_details.reason == speechsdk.CancellationReason.Error:
                 if cancellation_details.error_details:
-                    logger.error(
+                    log.error(
                         "Error details: {}".format(cancellation_details.error_details)
                     )
                     if "authentication" in cancellation_details.error_details.lower():
-                        logger.error(
+                        log.error(
                             "The authentication credentials are invalid. Please check the environment variables AZURE_SUBSCRIPTION_KEY and AZURE_SERVICE_REGION."
                         )
-                        logger.info(
+                        log.info(
                             "Would you like to enter new values for the variables in the .env file? [Y/n]"
                         )
                         if input().lower() in ["y", "yes", ""]:

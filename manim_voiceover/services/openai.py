@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 from dotenv import find_dotenv, load_dotenv
-from manim import logger
+from manimlib import log
 
 from manim_voiceover.helper import (
     create_dotenv_file,
@@ -15,7 +15,7 @@ from manim_voiceover.services.base import SpeechService
 try:
     import openai
 except ImportError:
-    logger.error(
+    log.error(
         "Missing packages. "
         'Run `pip install "manim-voiceover[openai]"` to use OpenAIService.'
     )
@@ -25,7 +25,7 @@ load_dotenv(find_dotenv(usecwd=True))
 
 
 def create_dotenv_openai():
-    logger.info(
+    log.info(
         "Check out https://voiceover.manim.community/en/stable/services.html "
         "to learn how to create an account and get your subscription key."
     )
@@ -34,7 +34,7 @@ def create_dotenv_openai():
             "The environment variable OPENAI_API_KEY is not set. Please set it "
             "or create a .env file with the variables."
         )
-    logger.info("The .env file has been created. Please run Manim again.")
+    log.info("The .env file has been created. Please run Manim again.")
     sys.exit()
 
 

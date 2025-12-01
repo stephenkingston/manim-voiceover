@@ -1,12 +1,12 @@
 from pathlib import Path
 import re
 import numpy as np
-from manim import logger
+from manimlib import log
 
 from typing import Optional, List
 from scipy.interpolate import interp1d
 
-from manim import Scene
+from manimlib import Scene
 from manim_voiceover.modify_audio import get_duration
 from manim_voiceover.helper import remove_bookmarks
 
@@ -27,7 +27,7 @@ class TimeInterpolator:
         try:
             return self.f(distance)
         except:
-            logger.warning(
+            log.warning(
                 "TimeInterpolator received weird input, there may be something wrong with the word boundaries."
             )
             return self.y[-1]
@@ -48,7 +48,7 @@ class VoiceoverTracker:
         self.cache_dir = cache_dir
         self.duration = get_duration(Path(cache_dir) / self.data["final_audio"])
         # last_t = scene.last_t
-        last_t = scene.renderer.time
+        last_t = scene.time
         if last_t is None:
             last_t = 0
         self.start_t = last_t
@@ -86,7 +86,7 @@ class VoiceoverTracker:
 
         word_boundaries = self.data["word_boundaries"]
         if not word_boundaries or len(word_boundaries) < 2:
-            logger.warning(
+            log.warning(
                 f"Word boundaries for voiceover {self.data['input_text']} are not "
                 "available or are insufficient. Using fallback word boundaries."
             )
@@ -130,7 +130,7 @@ class VoiceoverTracker:
             int: The remaining duration of the voiceover in seconds.
         """
         # result= max(self.end_t - self.scene.last_t, 0)
-        result = max(self.end_t - self.scene.renderer.time + buff, 0)
+        result = max(self.end_t - self.scene.time + buff, 0)
         # print(result)
         return result
 
@@ -161,7 +161,7 @@ class VoiceoverTracker:
         self._check_bookmarks()
         if not mark in self.bookmark_times:
             raise Exception("There is no <bookmark mark='%s' />" % mark)
-        result = max(self.bookmark_times[mark] - self.scene.renderer.time + buff, 0)
+        result = max(self.bookmark_times[mark] - self.scene.time + buff, 0)
         if limit is not None:
             result = min(limit, result)
         return result

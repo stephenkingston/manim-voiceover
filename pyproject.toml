@@ -41,7 +41,7 @@ manim_render_translation = 'manim_voiceover.translate.render:main'
 
 [tool.poetry.dependencies]
 python = ">=3.11, <4"
-manim = "*"
+manimgl = "*"
 sox = "^1.4.1"
 python-dotenv = "^0.21.0"
 mutagen = "^1.46.0"

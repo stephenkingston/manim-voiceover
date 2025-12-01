@@ -5,7 +5,8 @@ from typing import Optional, Generator
 import re
 import typing as t
 
-from manim import Scene, config
+from manimlib import Scene
+from manimlib import manim_config as config
 from manim_voiceover.services.base import SpeechService
 from manim_voiceover.tracker import VoiceoverTracker
 from manim_voiceover.helper import chunks, remove_bookmarks
@@ -37,10 +38,7 @@ class VoiceoverScene(Scene):
         """
         self.speech_service = speech_service
         self.current_tracker = None
-        if config.save_last_frame:
-            self.create_subcaption = False
-        else:
-            self.create_subcaption = create_subcaption
+        self.create_subcaption = create_subcaption
 
     def add_voiceover_text(
         self,
@@ -68,7 +66,9 @@ class VoiceoverScene(Scene):
 
         dict_ = self.speech_service._wrap_generate_from_text(text, **kwargs)
         tracker = VoiceoverTracker(self, dict_, self.speech_service.cache_dir)
-        self.renderer.skip_animations = self.renderer._original_skipping_status
+        if hasattr(self, 'skip_animations') and hasattr(self, '_original_skipping_status'):
+            self.skip_animations = self._original_skipping_status
+
         self.add_sound(str(Path(self.speech_service.cache_dir) / dict_["final_audio"]))
         self.current_tracker = tracker
 
@@ -123,11 +123,11 @@ class VoiceoverScene(Scene):
         current_offset = 0
         for idx, subcaption in enumerate(subcaptions):
             chunk_duration = duration * subcaption_weights[idx]
-            self.add_subcaption(
-                subcaption,
-                duration=max(chunk_duration - subcaption_buff, 0),
-                offset=current_offset,
-            )
+            # self.add_subcaption(
+            #     subcaption,
+            #     duration=max(chunk_duration - subcaption_buff, 0),
+            #     offset=current_offset,
+            # )
             current_offset += chunk_duration
 
     def add_voiceover_ssml(self, ssml: str, **kwargs) -> None:
@@ -155,7 +155,8 @@ class VoiceoverScene(Scene):
         Args:
             duration (float): The duration to wait for in seconds.
         """
-        if duration > 1 / config["frame_rate"]:
+        fps = config.get("camera", {}).get("fps", 30)
+        if duration > 1 / int(fps):
             self.wait(duration)
 
     def wait_until_bookmark(self, mark: str) -> None:

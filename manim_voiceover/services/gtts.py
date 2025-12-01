@@ -1,11 +1,11 @@
 from pathlib import Path
-from manim import logger
+from manimlib import log
 from manim_voiceover.helper import prompt_ask_missing_extras, remove_bookmarks
 
 try:
     from gtts import gTTS, gTTSError
 except ImportError:
-    logger.error(
+    log.error(
         'Missing packages. Run `pip install "manim-voiceover[gtts]"` to use GTTSService.'
     )
 
@@ -58,7 +58,7 @@ class GTTSService(SpeechService):
         try:
             tts = gTTS(input_text, **kwargs)
         except gTTSError as e:
-            logger.error(e)
+            log.error(e)
             raise Exception(
                 "Failed to initialize gTTS. "
                 f"Are you sure the arguments are correct? lang = {kwargs['lang']} and tld = {kwargs['tld']}. "
@@ -68,7 +68,7 @@ class GTTSService(SpeechService):
         try:
             tts.save(str(Path(cache_dir) / audio_path))
         except gTTSError as e:
-            logger.error(e)
+            log.error(e)
             raise Exception(
                 "gTTS gave an error. You are either not connected to the internet, or there is a problem with the Google Translate API."
             )

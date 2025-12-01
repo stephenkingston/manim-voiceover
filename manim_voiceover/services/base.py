@@ -5,7 +5,7 @@ import json
 import sys
 import hashlib
 from pathlib import Path
-from manim import config, logger
+from manimlib import log
 from slugify import slugify
 from manim_voiceover.defaults import (
     DEFAULT_VOICEOVER_CACHE_DIR,
@@ -72,7 +72,7 @@ class SpeechService(ABC):
         if cache_dir is not None:
             self.cache_dir = cache_dir
         else:
-            self.cache_dir = Path(config.media_dir) / DEFAULT_VOICEOVER_CACHE_DIR
+            self.cache_dir = Path("./media") / DEFAULT_VOICEOVER_CACHE_DIR
 
         if not os.path.exists(self.cache_dir):
             os.makedirs(self.cache_dir)
@@ -95,7 +95,7 @@ class SpeechService(ABC):
             transcription_result = self._whisper_model.transcribe(
                 str(Path(self.cache_dir) / original_audio), **self.transcription_kwargs
             )
-            logger.info("Transcription: " + transcription_result.text)
+            log.info("Transcription: " + transcription_result.text)
             word_boundaries = timestamps_to_word_boundaries(
                 transcription_result.segments_to_dicts()
             )
@@ -142,7 +142,7 @@ class SpeechService(ABC):
                     import whisper as __tmp
                     import stable_whisper as whisper
                 except ImportError:
-                    logger.error(
+                    log.error(
                         'Missing packages. Run `pip install "manim-voiceover[transcribe]"` to be able to transcribe voiceovers.'
                     )
 

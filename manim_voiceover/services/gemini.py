@@ -3,7 +3,7 @@ import sys
 import wave
 from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
-from manim import logger
+from manimlib import log
 
 from manim_voiceover.helper import (
     create_dotenv_file,
@@ -15,22 +15,21 @@ try:
     from google import genai
     from google.genai import types
 except ImportError:
-    logger.error(
-        "Missing packages. "
-        'Run `pip install google-genai` to use GeminiTTSService.'
+    log.error(
+        "Missing packages. " "Run `pip install google-genai` to use GeminiTTSService."
     )
 
 load_dotenv(find_dotenv(usecwd=True))
 
 
 def create_dotenv_gemini():
-    logger.info("You need a Gemini API key from https://makersuite.google.com/app/apikey")
+    log.info("You need a Gemini API key from https://makersuite.google.com/app/apikey")
     if not create_dotenv_file(["GOOGLE_API_KEY"]):
         raise ValueError(
             "The environment variable GOOGLE_API_KEY is not set. "
             "Please add it to your .env file."
         )
-    logger.info("The .env file has been created. Please restart Manim.")
+    log.info("The .env file has been created. Please restart Manim.")
     sys.exit()
 
 
@@ -44,7 +43,7 @@ class GeminiTTSService(SpeechService):
         model: str = "gemini-2.5-flash-preview-tts",
         voice_name: str = "Kore",
         transcription_model: str = "base",
-        **kwargs
+        **kwargs,
     ):
         self.model = model
         self.voice_name = voice_name
@@ -57,13 +56,8 @@ class GeminiTTSService(SpeechService):
 
         super().__init__(transcription_model=transcription_model, **kwargs)
 
-
     def generate_from_text(
-        self,
-        text: str,
-        cache_dir: str = None,
-        path: str = None,
-        **kwargs
+        self, text: str, cache_dir: str = None, path: str = None, **kwargs
     ) -> dict:
         if cache_dir is None:
             cache_dir = self.cache_dir
@@ -99,7 +93,7 @@ class GeminiTTSService(SpeechService):
                 ),
             )
         except Exception as e:
-            logger.error(f"Gemini TTS generation failed: {e}")
+            log.error(f"Gemini TTS generation failed: {e}")
             raise
 
         audio_data = response.candidates[0].content.parts[0].inline_data.data

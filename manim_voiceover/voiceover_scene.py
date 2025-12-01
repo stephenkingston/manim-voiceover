@@ -10,6 +10,9 @@ from manimlib import manim_config as config
 from manim_voiceover.services.base import SpeechService
 from manim_voiceover.tracker import VoiceoverTracker
 from manim_voiceover.helper import chunks, remove_bookmarks
+import pygame
+
+pygame.mixer.init()
 
 
 # SCRIPT_FILE_PATH = "media/script.txt"
@@ -69,8 +72,18 @@ class VoiceoverScene(Scene):
         if hasattr(self, 'skip_animations') and hasattr(self, '_original_skipping_status'):
             self.skip_animations = self._original_skipping_status
 
-        self.add_sound(str(Path(self.speech_service.cache_dir) / dict_["final_audio"]))
+        audio_path = str(Path(self.speech_service.cache_dir) / dict_["final_audio"])
+        self.add_sound(audio_path)
         self.current_tracker = tracker
+
+        is_writing = config.get("file_writer", {}).get("write_to_movie", False)
+
+        if not is_writing:
+            try:
+                sound = pygame.mixer.Sound(audio_path)
+                sound.play()
+            except Exception as e:
+                print(f"Could not play audio in preview: {e}")
 
         # if self.create_script:
         #     self.save_to_script_file(text)

@@ -66,6 +66,7 @@ stable-ts = { version ="^2.6.2", optional = true }
 python-slugify = "^8.0.1"
 elevenlabs = {version = "^0.2.27", optional = true}
 
+pygame = "^2.6.1"
 [tool.poetry.extras]
 azure = ["azure-cognitiveservices-speech"]
 gtts = ["gTTS"]

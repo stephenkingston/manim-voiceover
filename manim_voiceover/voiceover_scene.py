@@ -69,7 +69,9 @@ class VoiceoverScene(Scene):
 
         dict_ = self.speech_service._wrap_generate_from_text(text, **kwargs)
         tracker = VoiceoverTracker(self, dict_, self.speech_service.cache_dir)
-        if hasattr(self, 'skip_animations') and hasattr(self, '_original_skipping_status'):
+        if hasattr(self, "skip_animations") and hasattr(
+            self, "_original_skipping_status"
+        ):
             self.skip_animations = self._original_skipping_status
 
         audio_path = str(Path(self.speech_service.cache_dir) / dict_["final_audio"])
@@ -88,8 +90,8 @@ class VoiceoverScene(Scene):
 
         if not is_writing and (not is_skipping or is_interactive):
             try:
-                sound = pygame.mixer.Sound(audio_path)
-                sound.play()
+                tracker.sound = pygame.mixer.Sound(audio_path)
+                tracker.sound.play()
             except Exception as e:
                 print(f"Could not play audio in preview: {e}")
 

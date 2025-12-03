@@ -9,6 +9,7 @@ from scipy.interpolate import interp1d
 from manimlib import Scene
 from manim_voiceover.modify_audio import get_duration
 from manim_voiceover.helper import remove_bookmarks
+import signal
 
 AUDIO_OFFSET_RESOLUTION = 10_000_000
 
@@ -54,8 +55,23 @@ class VoiceoverTracker:
         self.start_t = last_t
         self.end_t = last_t + self.duration
 
+        signal.signal(signal.SIGINT, self._handle_interrupt)
+
         if "word_boundaries" in self.data:
             self._process_bookmarks()
+
+    def _handle_interrupt(self, signum, frame):
+        """
+        Handle Ctrl-C
+        """
+        if hasattr(self, "sound"):
+            print("Stopping sound")
+            self.sound.stop()
+
+        raise KeyboardInterrupt
+        # # Restore default handler and re-send the signal
+        # signal.signal(signal.SIGINT, signal.SIG_DFL)
+        # os.kill(os.getpid(), signal.SIGINT)
 
     def _get_fallback_word_boundaries(self):
         """

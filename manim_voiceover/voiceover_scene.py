@@ -77,8 +77,16 @@ class VoiceoverScene(Scene):
         self.current_tracker = tracker
 
         is_writing = config.get("file_writer", {}).get("write_to_movie", False)
+        is_skipping = config.get("scene", {}).get("skip_animations", False)
 
-        if not is_writing:
+        # Check if we're in an interactive IPython session
+        try:
+            get_ipython()
+            is_interactive = True
+        except NameError:
+            is_interactive = False
+
+        if not is_writing and (not is_skipping or is_interactive):
             try:
                 sound = pygame.mixer.Sound(audio_path)
                 sound.play()

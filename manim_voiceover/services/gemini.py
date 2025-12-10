@@ -108,6 +108,9 @@ class GeminiTTSService(SpeechService):
             wf.setframerate(24000)
             wf.writeframes(audio_data)
 
+        if ":" in text:
+            text = text.split(":", 1)[1].strip()
+
         return {
             "input_text": text,
             "input_data": input_data,
